@@ -1,5 +1,3 @@
-import tkinter
-
 import customtkinter
 from tkinter import messagebox
 import otp_generator
@@ -24,9 +22,29 @@ def verify_button():
 def resend_button():
     with open('email.txt', 'r') as f:
         send_email.send_mail(f.readline())
-    messagebox.showinfo('Email Resend', 'You will receive another email wait. Wait for 1 minute before resend again')
-    
+    time_label.configure(text='')
+    countdown(56)
+    messagebox.showinfo('Email Resend', 'You will receive another email. Wait for 1 minute before resend again')
 
+
+# timer
+def countdown(time_sec):
+    # Update the label with remaining time
+    def update_label():
+        nonlocal time_sec
+        time_sec -= 1
+        time_label.configure(text=str(time_sec))
+        if time_sec > 0:
+            # Call the update_label again after 1 second
+            app.after(1000, update_label)
+        else:
+            time_label.configure(text="Time's up!")
+
+    update_label()
+
+
+time_label = customtkinter.CTkLabel(master=app, text='')
+time_label.place(relx=0.5, rely=0.3, anchor=customtkinter.CENTER)
 entry = customtkinter.CTkEntry(master=app, placeholder_text="Enter OTP Here")
 entry.place(relx=0.5, rely=0.2, anchor=customtkinter.CENTER)
 verify = customtkinter.CTkButton(master=app, text="Verify", command=verify_button)
@@ -34,4 +52,6 @@ verify.place(relx=0.5, rely=0.4, anchor=customtkinter.CENTER)
 resend = customtkinter.CTkButton(master=app, text="Resend OTP", command=resend_button)
 resend.place(relx=0.5, rely=0.6, anchor=customtkinter.CENTER)
 
+# update_timer(remaining_time)
+countdown(56)
 app.mainloop()
